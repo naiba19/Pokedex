@@ -262,7 +262,7 @@ dialog::backdrop {
 
 [data-id="prev-button"]:hover,
 [data-id="next-button"]:hover,
-.close-dialog-button:hover {
+[data-id="close-dialog-button"]:hover
     background-color: #dddddd;
 }
 
