@@ -1,5 +1,5 @@
 const API_URL = "https://pokeapi.co/api/v2/pokemon";
-const POKEMON_LIMIT = 24;
+const POKEMON_LIMIT = 30;
 
 let offset = 0;
 let pokemonData = [];
@@ -23,10 +23,45 @@ async function loadPokemon() {
 
     const data = await response.json();
 
-    pokemonData = data.results;
+    pokemonData = [...pokemonData, ...data.results];
+    await renderPokemon(data.results);
     offset += POKEMON_LIMIT;
-    console.log(pokemonData);
     isLoading = false;
     loadMoreButton.disabled = false;
 }
+async function renderPokemon(pokemonArray) {
+    const pokemonDetails = await getPokemonDetails(pokemonArray);
+    pokemonList.innerHTML += pokemonDetails
+        .map(createPokemonCard)
+        .join("");
+}
+async function getPokemonDetails(pokemonArray) {
+    return Promise.all(
+        pokemonArray.map(async (pokemon) => {
+            const response = await fetch(pokemon.url);
+            return response.json();
+        })
+    );
+}
+
+function createPokemonCard(pokemon) {
+    const types = pokemon.types
+        .map((type) => type.type.name)
+        .join(" / ");
+        return `
+        <li>
+            <button class="pokemon-card" data-id="card" type="button">
+                <img
+                    data-id="card-image"
+                    src="${pokemon.sprites.front_default}"
+                    alt="${pokemon.name}"
+                >
+                <span class="pokemon-name">${pokemon.name}</span>
+                <span class="pokemon-type">${types}</span>
+            </button>
+        </li>
+    `;
+}
+
+loadMoreButton.addEventListener("click", loadPokemon);
 init();
