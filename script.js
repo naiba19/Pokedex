@@ -3,6 +3,7 @@ const POKEMON_LIMIT = 30;
 
 let offset = 0;
 let pokemonData = [];
+let pokemonDetailsData = [];
 let isLoading = false;
 
 const pokemonList = document.querySelector(".pokemon-list");
@@ -11,7 +12,7 @@ const dialog = document.querySelector('[data-id="dialog"]');
 const pokemonCards = document.querySelector(".pokemon-list");
 
 async function init() {
-await loadPokemon();    
+    await loadPokemon();
 }
 
 async function loadPokemon() {
@@ -33,6 +34,7 @@ async function loadPokemon() {
 }
 async function renderPokemon(pokemonArray) {
     const pokemonDetails = await getPokemonDetails(pokemonArray);
+    pokemonDetailsData = [...pokemonDetailsData, ...pokemonDetails];
     pokemonList.innerHTML += pokemonDetails
         .map(createPokemonCard)
         .join("");
@@ -50,9 +52,9 @@ function createPokemonCard(pokemon) {
     const types = pokemon.types
         .map((type) => type.type.name)
         .join(" / ");
-        return `
+    return `
         <li>
-            <button class="pokemon-card" data-id="card" type="button">
+            <button class="pokemon-card" data-id="card" data-pokemon-id="${pokemon.id}" type="button">
                 <img
                     data-id="card-image"
                     src="${pokemon.sprites.front_default}"
@@ -67,10 +69,66 @@ function createPokemonCard(pokemon) {
 
 loadMoreButton.addEventListener("click", loadPokemon);
 
+function openPokemonDialog(pokemon) {
+    const dialogName = document.querySelector(".dialog-name");
+    const dialogImage = document.querySelector('[data-id="dialog-image"]');
+
+    dialogName.textContent = pokemon.name;
+    dialogImage.src = pokemon.sprites.front_default;
+    dialogImage.alt = pokemon.name;
+    dialogImage.dataset.pokemonId = pokemon.id;
+
+    dialog.showModal();
+}
+
 pokemonCards.addEventListener("click", (event) => {
     const card = event.target.closest('[data-id="card"]');
 
     if (!card) return;
-    dialog.showModal();
+    const pokemonId = Number(card.dataset.pokemonId);
+    const pokemon = pokemonDetailsData.find(
+        (pokemon) => pokemon.id === pokemonId
+    );
+    openPokemonDialog(pokemon);
+});
+
+function showNextPokemon() {
+    const currentId = Number(
+        document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
+    );
+
+    const nextPokemon = pokemonDetailsData.find(
+        (pokemon) => pokemon.id === currentId + 1
+    );
+
+    if (nextPokemon) {
+        openPokemonDialog(nextPokemon);
+    }
+}
+
+function showPreviousPokemon() {
+    const currentId = Number(
+        document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
+    );
+
+    const previousPokemon = pokemonDetailsData.find(
+        (pokemon) => pokemon.id === currentId - 1
+    );
+
+    if (previousPokemon) {
+        openPokemonDialog(previousPokemon);
+    }
+}
+
+document.querySelector('[data-id="next-button"]')
+    .addEventListener("click", showNextPokemon);
+
+document.querySelector('[data-id="prev-button"]')
+    .addEventListener("click", showPreviousPokemon);
+
+
+document.querySelector('[data-id="close-dialog-button"]')
+    .addEventListener("click", () => {
+        dialog.close();
     });
 init();
