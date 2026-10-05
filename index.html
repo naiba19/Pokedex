@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A responsive Pokédex web application using the PokéAPI.">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./assets/favicon.png">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a class="logo" href="/.index.html" aria-label="Pokédex home">
+                <span>◉</span>
+            </a>
+
+            <h1>Pokédex</h1>
+
+            <form class="search-form">
+                <label for="search-input">Search Pokémon</label>
+                <input id="search-input" data-id="search-input" type="search" placeholder="Search Pokémon..."
+                    aria-label="Search Pokémon by name">
+
+                <button type="submit" data-id="search-button" aria-label="Search for Pokémon">
+                    Search
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <main data-id="content" class="content">
+
+        <p class="not-found" data-id="not-found" hidden>
+            No match found.
+        </p>
+
+        <ul class="pokemon-list" id=" pokemon-list" aria-label="Pokémon list">
+        </ul>
+
+        <div class="load-more-container">
+            <button type="button" data-id="load-more-button" aria-label="Load more Pokémon">
+                Load More
+            </button>
+        </div>
+    </main>
+
+    <dialog data-id="dialog" aria-label="Pokémon details">
+
+        <div class="dialog-content" data-id="overlay-pokemon-name">
+
+            <button type="button" data-id="close-dialog-button" aria-label="Close Pokémon details">
+                ×
+            </button>
+
+            <button type="button" data-id="prev-button" aria-label="Show previous Pokémon">
+                ←
+            </button>
+
+            <div class="dialog-pokemon">
+                <h2 class="dialog-name"></h2>
+
+                <img data-id="dialog-image" src="" alt="">
+
+<div class="pokemon-stats">
+    <p>HP: <span class="stat-hp"></span></p>
+    <p>Attack: <span class="stat-attack"></span></p>
+    <p>Defense: <span class="stat-defense"></span></p>
+</div>
+            </div>
+
+            <button
+            type="button"
+            data-id="next-button"
+            aria-label="Show next Pokémon">→
+        </button>
+        </div>
+
+    </dialog>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
