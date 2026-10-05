@@ -7,6 +7,8 @@ let isLoading = false;
 
 const pokemonList = document.querySelector(".pokemon-list");
 const loadMoreButton = document.querySelector('[data-id="load-more-button"]');
+const dialog = document.querySelector('[data-id="dialog"]');
+const pokemonCards = document.querySelector(".pokemon-list");
 
 async function init() {
 await loadPokemon();    
@@ -64,4 +66,11 @@ function createPokemonCard(pokemon) {
 }
 
 loadMoreButton.addEventListener("click", loadPokemon);
+
+pokemonCards.addEventListener("click", (event) => {
+    const card = event.target.closest('[data-id="card"]');
+
+    if (!card) return;
+    dialog.showModal();
+    });
 init();
