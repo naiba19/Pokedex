@@ -175,4 +175,16 @@ document.querySelector('[data-id="close-dialog-button"]')
     .addEventListener("click", () => {
         dialog.close();
     });
+
+dialog.addEventListener("click", (event) => {
+if (event.target === dialog) {
+    dialog.close();
+}
+});
+
+
+
+
+
+
 init();
