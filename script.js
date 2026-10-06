@@ -1,9 +1,10 @@
 const API_URL = "https://pokeapi.co/api/v2/pokemon";
-const POKEMON_LIMIT = 30;
+const POKEMON_LIMIT = 20;
 
 let offset = 0;
 let pokemonData = [];
 let pokemonDetailsData = [];
+let pokemonCache = {};
 let isLoading = false;
 
 const pokemonList = document.querySelector(".pokemon-list");
@@ -48,8 +49,15 @@ async function renderPokemon(pokemonArray) {
 async function getPokemonDetails(pokemonArray) {
     return Promise.all(
         pokemonArray.map(async (pokemon) => {
+            if (pokemonCache[pokemon.name]) {
+                return pokemonCache[pokemon.name];
+            }
+
             const response = await fetch(pokemon.url);
-            return response.json();
+            const data = await response.json();
+            pokemonCache[pokemon.name] = data;
+            return data;
+
         })
     );
 }
