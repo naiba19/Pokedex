@@ -13,6 +13,7 @@ const pokemonCards = document.querySelector(".pokemon-list");
 const searchForm = document.querySelector(".search-form");
 const searchInput = document.querySelector('[data-id="search-input"]');
 const notFound = document.querySelector('[data-id="not-found"]');
+const loading = document.querySelector('[data-id="loading"]');
 
 async function init() {
     await loadPokemon();
@@ -21,6 +22,7 @@ async function init() {
 async function loadPokemon() {
     if (isLoading) return;
     isLoading = true;
+    loading.hidden = false;
     loadMoreButton.disabled = true;
 
     const response = await fetch(
@@ -32,6 +34,7 @@ async function loadPokemon() {
     pokemonData = [...pokemonData, ...data.results];
     await renderPokemon(data.results);
     offset += POKEMON_LIMIT;
+    loading.hidden = true;
     isLoading = false;
     loadMoreButton.disabled = false;
 }
