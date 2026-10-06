@@ -10,6 +10,9 @@ const pokemonList = document.querySelector(".pokemon-list");
 const loadMoreButton = document.querySelector('[data-id="load-more-button"]');
 const dialog = document.querySelector('[data-id="dialog"]');
 const pokemonCards = document.querySelector(".pokemon-list");
+const searchForm = document.querySelector(".search-form");
+const searchInput = document.querySelector('[data-id="search-input"]');
+const notFound = document.querySelector('[data-id="not-found"]');
 
 async function init() {
     await loadPokemon();
@@ -48,6 +51,22 @@ async function getPokemonDetails(pokemonArray) {
     );
 }
 
+async function searchPokemon() {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    if (searchTerm.length < 3) return;
+    const pokemon = pokemonDetailsData.filter((pokemon) =>
+        pokemon.name.includes(searchTerm)
+    );
+
+    pokemonList.innerHTML = pokemon.map(createPokemonCard).join("");
+    notFound.hidden = pokemon.length !== 0;
+}
+
+searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchPokemon();
+});
+
 function createPokemonCard(pokemon) {
     const types = pokemon.types
         .map((type) => type.type.name)
@@ -73,7 +92,7 @@ function openPokemonDialog(pokemon) {
     const dialogName = document.querySelector(".dialog-name");
     const dialogImage = document.querySelector('[data-id="dialog-image"]');
     const hp = document.querySelector(".stat-hp");
-    const attack = document.querySelector(".stat-hp");
+    const attack = document.querySelector(".stat-attack");
     const defense = document.querySelector(".stat-defense");
 
     dialogName.textContent = pokemon.name;
