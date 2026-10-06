@@ -123,6 +123,7 @@ function openPokemonDialog(pokemon) {
     defense.textContent = pokemon.stats[2].base_stat;
 
     dialog.showModal();
+    document.body.style.overflow = "hidden";
 }
 
 pokemonCards.addEventListener("click", (event) => {
@@ -174,6 +175,7 @@ document.querySelector('[data-id="prev-button"]')
 document.querySelector('[data-id="close-dialog-button"]')
     .addEventListener("click", () => {
         dialog.close();
+        document.body.style.overflow = "";
     });
 
 dialog.addEventListener("click", (event) => {
