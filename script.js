@@ -142,9 +142,11 @@ function showNextPokemon() {
         document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
     );
 
-    const nextPokemon = pokemonDetailsData.find(
-        (pokemon) => pokemon.id === currentId + 1
+    const currentIndex = pokemonDetailsData.findIndex(
+        (pokemon) => pokemon.id === currentId
     );
+
+    const nextPokemon = pokemonDetailsData[currentIndex + 1];
 
     if (nextPokemon) {
         openPokemonDialog(nextPokemon);
@@ -156,9 +158,10 @@ function showPreviousPokemon() {
         document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
     );
 
-    const previousPokemon = pokemonDetailsData.find(
-        (pokemon) => pokemon.id === currentId - 1
+    const currentIndex = pokemonDetailsData.findIndex(
+        (pokemon) => pokemon.id === currentId
     );
+const previousPokemon = pokemonDetailsData[currentIndex - 1];
 
     if (previousPokemon) {
         openPokemonDialog(previousPokemon);
