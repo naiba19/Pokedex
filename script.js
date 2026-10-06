@@ -72,11 +72,18 @@ loadMoreButton.addEventListener("click", loadPokemon);
 function openPokemonDialog(pokemon) {
     const dialogName = document.querySelector(".dialog-name");
     const dialogImage = document.querySelector('[data-id="dialog-image"]');
+    const hp = document.querySelector(".stat-hp");
+    const attack = document.querySelector(".stat-hp");
+    const defense = document.querySelector(".stat-defense");
 
     dialogName.textContent = pokemon.name;
     dialogImage.src = pokemon.sprites.front_default;
     dialogImage.alt = pokemon.name;
     dialogImage.dataset.pokemonId = pokemon.id;
+
+    hp.textContent = pokemon.stats[0].base_stat;
+    attack.textContent = pokemon.stats[1].base_stat;
+    defense.textContent = pokemon.stats[2].base_stat;
 
     dialog.showModal();
 }
