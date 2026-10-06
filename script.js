@@ -22,32 +22,39 @@ async function init() {
     await loadPokemon();
 }
 
-async function loadPokemon() {
-    if (isLoading) return;
-    isLoading = true;
-    loading.hidden = false;
-    loadMoreButton.disabled = true;
+function setLoadingState(loadingState) {
+    loading.hidden = !loadingState;
+    loadMoreButton.disabled = loadingState;
+}
 
+async function fetchPokemonData() {
     const response = await fetch(
         `${API_URL}?limit=${POKEMON_LIMIT}&offset=${offset}`
     );
 
-    const data = await response.json();
+    return response.json();
+}
+
+async function loadPokemon() {
+    if (isLoading) return;
+    isLoading = true;
+    setLoadingState(true);
+
+    const data = await fetchPokemonData();
 
     pokemonData = [...pokemonData, ...data.results];
     await renderPokemon(data.results);
     offset += POKEMON_LIMIT;
-    loading.hidden = true;
+    setLoadingState(false);
     isLoading = false;
-    loadMoreButton.disabled = false;
 }
+
 async function renderPokemon(pokemonArray) {
     const pokemonDetails = await getPokemonDetails(pokemonArray);
     pokemonDetailsData = [...pokemonDetailsData, ...pokemonDetails];
-    pokemonList.innerHTML += pokemonDetails
-        .map(createPokemonCard)
-        .join("");
+    renderPokemonCards(pokemonDetails);
 }
+
 async function getPokemonDetails(pokemonArray) {
     return Promise.all(
         pokemonArray.map(async (pokemon) => {
@@ -106,6 +113,12 @@ function createPokemonCard(pokemon) {
     `;
 }
 
+function renderPokemonCards(pokemonDetails) {
+    pokemonList.innerHTML += pokemonDetails
+        .map(createPokemonCard)
+        .join("");
+}
+
 loadMoreButton.addEventListener("click", loadPokemon);
 
 async function loadEvolutionChain(pokemon) {
@@ -133,8 +146,8 @@ function getEvolutionNames(chain) {
 
     chain.evolves_to.forEach((evolution) => {
         names.push(...getEvolutionNames(evolution));
-});
-return names;
+    });
+    return names;
 }
 
 
@@ -150,7 +163,7 @@ async function openPokemonDialog(pokemon) {
     const loadEvolutionData = await loadEvolutionChain(pokemon);
     const evolutionNames = getEvolutionNames(loadEvolutionData.chain);
     document.querySelector('[data-id="evolution-chain"]').textContent =
-    `Evolution: ${evolutionNames.join(" → ")}`;
+        `Evolution: ${evolutionNames.join(" → ")}`;
     dialogImage.src = pokemon.sprites.front_default;
     dialogImage.alt = pokemon.name;
     dialogImage.dataset.pokemonId = pokemon.id;
