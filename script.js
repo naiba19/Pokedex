@@ -53,6 +53,13 @@ async function getPokemonDetails(pokemonArray) {
 
 async function searchPokemon() {
     const searchTerm = searchInput.value.trim().toLowerCase();
+
+if (searchTerm.length === 0) {
+    pokemonList.innerHTML = pokemonDetailsData
+    .map(createPokemonCard)
+    .join("");
+}
+
     if (searchTerm.length < 3) return;
     const pokemon = pokemonDetailsData.filter((pokemon) =>
         pokemon.name.includes(searchTerm)
