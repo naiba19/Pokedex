@@ -57,11 +57,11 @@ async function getPokemonDetails(pokemonArray) {
 async function searchPokemon() {
     const searchTerm = searchInput.value.trim().toLowerCase();
 
-if (searchTerm.length === 0) {
-    pokemonList.innerHTML = pokemonDetailsData
-    .map(createPokemonCard)
-    .join("");
-}
+    if (searchTerm.length === 0) {
+        pokemonList.innerHTML = pokemonDetailsData
+            .map(createPokemonCard)
+            .join("");
+    }
 
     if (searchTerm.length < 3) return;
     const pokemon = pokemonDetailsData.filter((pokemon) =>
@@ -83,7 +83,7 @@ function createPokemonCard(pokemon) {
         .join(" / ");
     return `
         <li>
-            <button class="pokemon-card" data-id="card" data-pokemon-id="${pokemon.id}" type="button">
+           <button class="pokemon-card type-${pokemon.types[0].type.name}" data-id="card" data-pokemon-id="${pokemon.id}" type="button">
                 <img
                     data-id="card-image"
                     src="${pokemon.sprites.front_default}"
