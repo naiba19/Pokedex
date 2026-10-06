@@ -1,10 +1,12 @@
 const API_URL = "https://pokeapi.co/api/v2/pokemon";
+const SPECIES_API_URL = "https://pokeapi.co/api/v2/pokemon-species";
 const POKEMON_LIMIT = 20;
 
 let offset = 0;
 let pokemonData = [];
 let pokemonDetailsData = [];
 let pokemonCache = {};
+let evolutionCache = {};
 let isLoading = false;
 
 const pokemonList = document.querySelector(".pokemon-list");
@@ -106,7 +108,38 @@ function createPokemonCard(pokemon) {
 
 loadMoreButton.addEventListener("click", loadPokemon);
 
-function openPokemonDialog(pokemon) {
+async function loadEvolutionChain(pokemon) {
+    const speciesResponse = await fetch(
+        `${SPECIES_API_URL}/${pokemon.id}`
+    );
+
+    const speciesData = await speciesResponse.json();
+    const evolutionUrl = speciesData.evolution_chain.url;
+
+    if (evolutionCache[pokemon.id]) {
+        return evolutionCache[pokemon.id];
+    }
+
+
+    const evolutionResponse = await fetch(evolutionUrl);
+    const evolutionData = await evolutionResponse.json();
+
+    evolutionCache[pokemon.id] = evolutionData;
+    return evolutionData;
+}
+
+function getEvolutionNames(chain) {
+    const names = [chain.species.name];
+
+    chain.evolves_to.forEach((evolution) => {
+        names.push(...getEvolutionNames(evolution));
+});
+return names;
+}
+
+
+
+async function openPokemonDialog(pokemon) {
     const dialogName = document.querySelector(".dialog-name");
     const dialogImage = document.querySelector('[data-id="dialog-image"]');
     const hp = document.querySelector(".stat-hp");
@@ -114,6 +147,10 @@ function openPokemonDialog(pokemon) {
     const defense = document.querySelector(".stat-defense");
 
     dialogName.textContent = pokemon.name;
+    const loadEvolutionData = await loadEvolutionChain(pokemon);
+    const evolutionNames = getEvolutionNames(loadEvolutionData.chain);
+    document.querySelector('[data-id="evolution-chain"]').textContent =
+    `Evolution: ${evolutionNames.join(" → ")}`;
     dialogImage.src = pokemon.sprites.front_default;
     dialogImage.alt = pokemon.name;
     dialogImage.dataset.pokemonId = pokemon.id;
@@ -161,7 +198,7 @@ function showPreviousPokemon() {
     const currentIndex = pokemonDetailsData.findIndex(
         (pokemon) => pokemon.id === currentId
     );
-const previousPokemon = pokemonDetailsData[currentIndex - 1];
+    const previousPokemon = pokemonDetailsData[currentIndex - 1];
 
     if (previousPokemon) {
         openPokemonDialog(previousPokemon);
@@ -182,9 +219,9 @@ document.querySelector('[data-id="close-dialog-button"]')
     });
 
 dialog.addEventListener("click", (event) => {
-if (event.target === dialog) {
-    dialog.close();
-}
+    if (event.target === dialog) {
+        dialog.close();
+    }
 });
 
 
