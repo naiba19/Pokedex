@@ -100,7 +100,7 @@ function createPokemonCard(pokemon) {
         .join(" / ");
     return `
         <li>
-           <button class="pokemon-card type-${pokemon.types[0].type.name}" data-id="card" data-pokemon-id="${pokemon.id}" type="button">
+           <button class="pokemon-card type-${pokemon.types[0].type.name}" data-id="card" data-pokemon-id="${pokemon.id}" type="button" aria-label="Open ${pokemon.name} details">
                 <img
                     data-id="card-image"
                     src="${pokemon.sprites.front_default}"
@@ -234,12 +234,8 @@ document.querySelector('[data-id="close-dialog-button"]')
 dialog.addEventListener("click", (event) => {
     if (event.target === dialog) {
         dialog.close();
+        document.body.style.overflow = "";
     }
 });
-
-
-
-
-
 
 init();
