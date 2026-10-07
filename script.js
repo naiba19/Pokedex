@@ -40,13 +40,19 @@ async function loadPokemon() {
     isLoading = true;
     setLoadingState(true);
 
-    const data = await fetchPokemonData();
+    try {
+        const data = await fetchPokemonData();
 
-    pokemonData = [...pokemonData, ...data.results];
-    await renderPokemon(data.results);
-    offset += POKEMON_LIMIT;
-    setLoadingState(false);
-    isLoading = false;
+        pokemonData = [...pokemonData, ...data.results];
+        await renderPokemon(data.results);
+        offset += POKEMON_LIMIT;
+    } catch (error) {
+        console.error("Failed to load Pokémon:", error);
+        alert("Could not load Pokémon. Please try again.");
+    } finally {
+        setLoadingState(false);
+        isLoading = false;
+    }
 }
 
 async function renderPokemon(pokemonArray) {
@@ -74,13 +80,14 @@ async function getPokemonDetails(pokemonArray) {
 async function searchPokemon() {
     const searchTerm = searchInput.value.trim().toLowerCase();
 
-    if (searchTerm.length === 0) {
+    if (searchTerm.length < 3) {
         pokemonList.innerHTML = pokemonDetailsData
-            .map(createPokemonCard)
-            .join("");
+        .map(createPokemonCard)
+        .join("");
+        notFound.hidden = true;
+        return;
     }
 
-    if (searchTerm.length < 3) return;
     const pokemon = pokemonDetailsData.filter((pokemon) =>
         pokemon.name.includes(searchTerm)
     );
@@ -122,17 +129,16 @@ function renderPokemonCards(pokemonDetails) {
 loadMoreButton.addEventListener("click", loadPokemon);
 
 async function loadEvolutionChain(pokemon) {
+    if (evolutionCache[pokemon.id]) {
+        return evolutionCache[pokemon.id];
+    }
+
     const speciesResponse = await fetch(
         `${SPECIES_API_URL}/${pokemon.id}`
     );
 
     const speciesData = await speciesResponse.json();
     const evolutionUrl = speciesData.evolution_chain.url;
-
-    if (evolutionCache[pokemon.id]) {
-        return evolutionCache[pokemon.id];
-    }
-
 
     const evolutionResponse = await fetch(evolutionUrl);
     const evolutionData = await evolutionResponse.json();
