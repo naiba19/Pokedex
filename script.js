@@ -242,7 +242,17 @@ document.querySelector('[data-id="next-button"]')
 document.querySelector('[data-id="prev-button"]')
     .addEventListener("click", showPreviousPokemon);
 
+document.addEventListener("keydown", (event) => {
+    if (!dialog.open) return;
 
+    if (event.key === "ArrowRight") {
+        showNextPokemon();
+    }
+
+    if (event.key === "ArrowLeft") {
+        showPreviousPokemon();
+    }
+});
 document.querySelector('[data-id="close-dialog-button"]')
     .addEventListener("click", () => {
         dialog.close();
