@@ -3,8 +3,8 @@ const SPECIES_API_URL = "https://pokeapi.co/api/v2/pokemon-species";
 const POKEMON_LIMIT = 20;
 
 let offset = 0;
-let pokemonData = [];
 let pokemonDetailsData = [];
+let displayedPokemonData = [];
 let pokemonCache = {};
 let evolutionCache = {};
 let isLoading = false;
@@ -43,7 +43,6 @@ async function loadPokemon() {
     try {
         const data = await fetchPokemonData();
 
-        pokemonData = [...pokemonData, ...data.results];
         await renderPokemon(data.results);
         offset += POKEMON_LIMIT;
     } catch (error) {
@@ -58,6 +57,8 @@ async function loadPokemon() {
 async function renderPokemon(pokemonArray) {
     const pokemonDetails = await getPokemonDetails(pokemonArray);
     pokemonDetailsData = [...pokemonDetailsData, ...pokemonDetails];
+    displayedPokemonData = [...pokemonDetailsData];
+
     renderPokemonCards(pokemonDetails);
 }
 
@@ -81,9 +82,12 @@ async function searchPokemon() {
     const searchTerm = searchInput.value.trim().toLowerCase();
 
     if (searchTerm.length < 3) {
+        displayedPokemonData = [...pokemonDetailsData];
+
         pokemonList.innerHTML = pokemonDetailsData
-        .map(createPokemonCard)
-        .join("");
+            .map(createPokemonCard)
+            .join("");
+            
         notFound.hidden = true;
         return;
     }
@@ -92,6 +96,7 @@ async function searchPokemon() {
         pokemon.name.includes(searchTerm)
     );
 
+    displayedPokemonData = pokemon;
     pokemonList.innerHTML = pokemon.map(createPokemonCard).join("");
     notFound.hidden = pokemon.length !== 0;
 }
@@ -190,6 +195,9 @@ pokemonCards.addEventListener("click", (event) => {
     const pokemon = pokemonDetailsData.find(
         (pokemon) => pokemon.id === pokemonId
     );
+
+    if (!pokemon) return;
+
     openPokemonDialog(pokemon);
 });
 
@@ -198,11 +206,11 @@ function showNextPokemon() {
         document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
     );
 
-    const currentIndex = pokemonDetailsData.findIndex(
+    const currentIndex = displayedPokemonData.findIndex(
         (pokemon) => pokemon.id === currentId
     );
 
-    const nextPokemon = pokemonDetailsData[currentIndex + 1];
+    const nextPokemon = displayedPokemonData[currentIndex + 1];
 
     if (nextPokemon) {
         openPokemonDialog(nextPokemon);
@@ -214,10 +222,10 @@ function showPreviousPokemon() {
         document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
     );
 
-    const currentIndex = pokemonDetailsData.findIndex(
+    const currentIndex = displayedPokemonData.findIndex(
         (pokemon) => pokemon.id === currentId
     );
-    const previousPokemon = pokemonDetailsData[currentIndex - 1];
+    const previousPokemon = displayedPokemonData[currentIndex - 1];
 
     if (previousPokemon) {
         openPokemonDialog(previousPokemon);
