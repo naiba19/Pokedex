@@ -58,14 +58,14 @@ async function renderPokemon(pokemonArray) {
     const pokemonDetails = await getPokemonDetails(pokemonArray);
     pokemonDetailsData = [...pokemonDetailsData, ...pokemonDetails];
     if (searchInput.value.trim().length < 3) {
-    displayedPokemonData = [...pokemonDetailsData];
-}
+        displayedPokemonData = [...pokemonDetailsData];
+    }
 
     if (searchInput.value.trim().length >= 3) {
-    searchPokemon();
-} else {
-    renderPokemonCards(pokemonDetails);
-}
+        searchPokemon();
+    } else {
+        renderPokemonCards(pokemonDetails);
+    }
 }
 
 async function getPokemonDetails(pokemonArray) {
@@ -114,8 +114,8 @@ searchForm.addEventListener("submit", (event) => {
 
 function createPokemonCard(pokemon) {
     const types = pokemon.types
-    .map((type) => `<span class="pokemon-type">${type.type.name}</span>`)
-    .join("");
+        .map((type) => `<span class="pokemon-type">${type.type.name}</span>`)
+        .join("");
     return `
         <li>
            <button class="pokemon-card type-${pokemon.types[0].type.name}" data-id="card" data-pokemon-id="${pokemon.id}" type="button" aria-label="Open ${pokemon.name} details">
@@ -166,8 +166,6 @@ function getEvolutionNames(chain) {
     });
     return names;
 }
-
-
 
 async function openPokemonDialog(pokemon) {
     const dialogName = document.querySelector(".dialog-name");
