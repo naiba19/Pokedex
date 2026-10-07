@@ -57,9 +57,15 @@ async function loadPokemon() {
 async function renderPokemon(pokemonArray) {
     const pokemonDetails = await getPokemonDetails(pokemonArray);
     pokemonDetailsData = [...pokemonDetailsData, ...pokemonDetails];
+    if (searchInput.value.trim().length < 3) {
     displayedPokemonData = [...pokemonDetailsData];
+}
 
+    if (searchInput.value.trim().length >= 3) {
+    searchPokemon();
+} else {
     renderPokemonCards(pokemonDetails);
+}
 }
 
 async function getPokemonDetails(pokemonArray) {
@@ -87,7 +93,7 @@ async function searchPokemon() {
         pokemonList.innerHTML = pokemonDetailsData
             .map(createPokemonCard)
             .join("");
-            
+
         notFound.hidden = true;
         return;
     }
