@@ -118,8 +118,11 @@ button {
 .pokemon-list {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
 }
 
 .pokemon-card {
@@ -324,7 +327,9 @@ dialog::backdrop {
 }
 
 @keyframes pokemon-idle {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0) rotate(0deg);
     }
 
@@ -381,7 +386,6 @@ dialog::backdrop {
     justify-content: center;
 }
 
-
 [data-id="prev-button"]:hover,
 [data-id="next-button"]:hover,
 [data-id="close-dialog-button"]:hover {
@@ -395,7 +399,6 @@ dialog::backdrop {
     opacity: 0.5;
     cursor: default;
 }
-
 
 .loading-overlay {
     position: fixed;
@@ -419,7 +422,7 @@ dialog::backdrop {
 
 @media (max-width: 1000px) {
     .pokemon-list {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .header-content {
@@ -522,13 +525,12 @@ dialog::backdrop {
         transform: none;
     }
 
-.dialog-pokemon img {
-    width: 140px;
-    height: 140px;
-}
+    .dialog-pokemon img {
+        width: 140px;
+        height: 140px;
+    }
 
     .dialog-content {
         padding: 32px 8px 20px;
     }
 }
-
