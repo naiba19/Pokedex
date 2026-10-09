@@ -167,6 +167,14 @@ function getEvolutionNames(chain) {
     return names;
 }
 
+function updateNavigationButtons(currentIndex) {
+    document.querySelector('[data-id="prev-button"]').disabled =
+        currentIndex <= 0;
+
+    document.querySelector('[data-id="next-button"]').disabled =
+        currentIndex >= displayedPokemonData.length - 1;
+}
+
 async function openPokemonDialog(pokemon) {
     const dialogName = document.querySelector(".dialog-name");
     const dialogImage = document.querySelector('[data-id="dialog-image"]');
@@ -186,6 +194,12 @@ async function openPokemonDialog(pokemon) {
     hp.textContent = pokemon.stats[0].base_stat;
     attack.textContent = pokemon.stats[1].base_stat;
     defense.textContent = pokemon.stats[2].base_stat;
+
+    const currentIndex = displayedPokemonData.findIndex(
+        (item) => item.id === pokemon.id
+    );
+
+    updateNavigationButtons(currentIndex);
 
     dialog.showModal();
     document.body.style.overflow = "hidden";
@@ -230,6 +244,15 @@ function showPreviousPokemon() {
         (pokemon) => pokemon.id === currentId
     );
     const previousPokemon = displayedPokemonData[currentIndex - 1];
+
+
+    function updateNavigationButtons(currentIndex) {
+        document.querySelector('[data-id="prev-button"]').disabled =
+            currentIndex <= 0;
+
+        document.querySelector('[data-id="next-button"]').disabled =
+            currentIndex >= displayedPokemonData.length - 1;
+    }
 
     if (previousPokemon) {
         openPokemonDialog(previousPokemon);

@@ -378,6 +378,14 @@ dialog::backdrop {
     background-color: #dddddd;
 }
 
+[data-id="prev-button"]:disabled,
+[data-id="next-button"]:disabled {
+    background-color: #94a3b8;
+    color: #64748b;
+    opacity: 0.5;
+    cursor: default;
+}
+
 @media (max-width: 1000px) {
     .pokemon-list {
         grid-template-columns: repeat(3, 1fr);
