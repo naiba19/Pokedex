@@ -8,6 +8,7 @@ let displayedPokemonData = [];
 let pokemonCache = {};
 let evolutionCache = {};
 let isLoading = false;
+let isSearchActive = false;
 
 const pokemonList = document.querySelector(".pokemon-list");
 const loadMoreButton = document.querySelector('[data-id="load-more-button"]');
@@ -89,16 +90,17 @@ async function searchPokemon() {
     const searchTerm = searchInput.value.trim().toLowerCase();
 
     if (searchTerm.length < 3) {
+        isSearchActive = false;
         displayedPokemonData = [...pokemonDetailsData];
-
         pokemonList.innerHTML = pokemonDetailsData
             .map(createPokemonCard)
             .join("");
-
+        loadMoreButton.textContent = "Load More";
         notFound.hidden = true;
         return;
     }
 
+    isSearchActive = true;
     const pokemon = pokemonDetailsData.filter((pokemon) =>
         pokemon.name.includes(searchTerm)
     );
@@ -106,12 +108,8 @@ async function searchPokemon() {
     displayedPokemonData = pokemon;
     pokemonList.innerHTML = pokemon.map(createPokemonCard).join("");
     notFound.hidden = pokemon.length !== 0;
+    loadMoreButton.textContent = "Back";
 }
-
-searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    searchPokemon();
-});
 
 function createPokemonCard(pokemon) {
     const types = pokemon.types
@@ -138,7 +136,21 @@ function renderPokemonCards(pokemonDetails) {
         .join("");
 }
 
-loadMoreButton.addEventListener("click", loadPokemon);
+searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchPokemon();
+});
+
+
+loadMoreButton.addEventListener("click", () => {
+    if (isSearchActive) {
+        searchInput.value = "";
+        searchPokemon();
+        return;
+    }
+
+    loadPokemon();
+});
 
 async function loadEvolutionChain(pokemon) {
     if (evolutionCache[pokemon.id]) {
