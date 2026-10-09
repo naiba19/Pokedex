@@ -48,10 +48,11 @@ async function loadPokemon() {
     } catch (error) {
         console.error("Failed to load Pokémon:", error);
         alert("Could not load Pokémon. Please try again.");
-    } finally {
-        setLoadingState(false);
-        isLoading = false;
-    }
+   } finally {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setLoadingState(false);
+    isLoading = false;
+}
 }
 
 async function renderPokemon(pokemonArray) {
@@ -125,7 +126,7 @@ function createPokemonCard(pokemon) {
                     alt="${pokemon.name}"
                 >
                 <span class="pokemon-name">${pokemon.name}</span>
-                <div class="pokemon-types">${types}</div>
+                <span class="pokemon-types">${types}</span>
             </button>
         </li>
     `;
@@ -201,8 +202,11 @@ async function openPokemonDialog(pokemon) {
 
     updateNavigationButtons(currentIndex);
 
+  if (!dialog.open) {
     dialog.showModal();
-    document.body.style.overflow = "hidden";
+}
+
+document.body.style.overflow = "hidden";
 }
 
 pokemonCards.addEventListener("click", (event) => {
@@ -245,15 +249,6 @@ function showPreviousPokemon() {
     );
     const previousPokemon = displayedPokemonData[currentIndex - 1];
 
-
-    function updateNavigationButtons(currentIndex) {
-        document.querySelector('[data-id="prev-button"]').disabled =
-            currentIndex <= 0;
-
-        document.querySelector('[data-id="next-button"]').disabled =
-            currentIndex >= displayedPokemonData.length - 1;
-    }
-
     if (previousPokemon) {
         openPokemonDialog(previousPokemon);
     }
@@ -287,6 +282,10 @@ dialog.addEventListener("click", (event) => {
         dialog.close();
         document.body.style.overflow = "";
     }
+});
+
+dialog.addEventListener("close", () => {
+    document.body.style.overflow = "";
 });
 
 init();

@@ -396,6 +396,27 @@ dialog::backdrop {
     cursor: default;
 }
 
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.loading-overlay[hidden] {
+    display: none;
+}
+
+.loading-overlay p {
+    margin: 0;
+}
+
 @media (max-width: 1000px) {
     .pokemon-list {
         grid-template-columns: repeat(3, 1fr);
