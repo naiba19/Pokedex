@@ -263,8 +263,9 @@ button {
     transform: none;
 }
 
+
 dialog {
-    width: min(600px, calc(100% - 40px));
+    width: min(480px, calc(100% - 40px));
     max-height: 90vh;
     margin: auto;
     padding: 0;
@@ -273,6 +274,7 @@ dialog {
     background-color: #111827;
     overflow: hidden;
 }
+
 
 dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.65);
@@ -364,13 +366,21 @@ dialog::backdrop {
 
 [data-id="prev-button"],
 [data-id="next-button"] {
+    flex: 0 0 44px;
     width: 44px;
+    min-width: 44px;
     height: 44px;
+    padding: 0;
     border: none;
     border-radius: 50%;
     background-color: #eeeeee;
+    color: #111827;
     font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 [data-id="prev-button"]:hover,
 [data-id="next-button"]:hover,
