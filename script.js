@@ -121,7 +121,7 @@ function createPokemonCard(pokemon) {
            <button class="pokemon-card type-${pokemon.types[0].type.name}" data-id="card" data-pokemon-id="${pokemon.id}" type="button" aria-label="Open ${pokemon.name} details">
                 <img
                     data-id="card-image"
-                    src="${pokemon.sprites.front_default}"
+                    src="${pokemon.sprites.other["official-artwork"].front_default}"
                     alt="${pokemon.name}"
                 >
                 <span class="pokemon-name">${pokemon.name}</span>

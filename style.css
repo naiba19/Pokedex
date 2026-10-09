@@ -314,9 +314,35 @@ dialog::backdrop {
 }
 
 .dialog-pokemon img {
-    width: 240px;
-    height: 240px;
+    width: 300px;
+    height: 300px;
     object-fit: contain;
+    animation: pokemon-idle 2s ease-in-out infinite;
+    object-position: center;
+}
+
+@keyframes pokemon-idle {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-5px) rotate(-2deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(0deg);
+    }
+
+    75% {
+        transform: translateY(-5px) rotate(2deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dialog-pokemon img {
+        animation: none;
+    }
 }
 
 .pokemon-stats {
@@ -466,3 +492,4 @@ dialog::backdrop {
         padding: 32px 8px 20px;
     }
 }
+
