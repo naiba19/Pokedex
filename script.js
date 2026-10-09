@@ -299,5 +299,3 @@ dialog.addEventListener("click", (event) => {
 dialog.addEventListener("close", () => {
     document.body.style.overflow = "";
 });
-
-init();
