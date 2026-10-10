@@ -20,6 +20,7 @@ const notFound = document.querySelector('[data-id="not-found"]');
 const loading = document.querySelector('[data-id="loading"]');
 
 async function init() {
+    setEventListener();
     await loadPokemon();
 }
 
@@ -111,46 +112,11 @@ async function searchPokemon() {
     loadMoreButton.textContent = "Back";
 }
 
-function createPokemonCard(pokemon) {
-    const types = pokemon.types
-        .map((type) => `<span class="pokemon-type">${type.type.name}</span>`)
-        .join("");
-    return `
-        <li>
-           <button class="pokemon-card type-${pokemon.types[0].type.name}" data-id="card" data-pokemon-id="${pokemon.id}" type="button" aria-label="Open ${pokemon.name} details">
-                <img
-                    data-id="card-image"
-                    src="${pokemon.sprites.other["official-artwork"].front_default}"
-                    alt="${pokemon.name}"
-                >
-                <span class="pokemon-name">${pokemon.name}</span>
-                <span class="pokemon-types">${types}</span>
-            </button>
-        </li>
-    `;
-}
-
 function renderPokemonCards(pokemonDetails) {
     pokemonList.innerHTML += pokemonDetails
         .map(createPokemonCard)
         .join("");
 }
-
-searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    searchPokemon();
-});
-
-
-loadMoreButton.addEventListener("click", () => {
-    if (isSearchActive) {
-        searchInput.value = "";
-        searchPokemon();
-        return;
-    }
-
-    loadPokemon();
-});
 
 async function loadEvolutionChain(pokemon) {
     if (evolutionCache[pokemon.id]) {
@@ -221,20 +187,6 @@ async function openPokemonDialog(pokemon) {
 document.body.style.overflow = "hidden";
 }
 
-pokemonCards.addEventListener("click", (event) => {
-    const card = event.target.closest('[data-id="card"]');
-
-    if (!card) return;
-    const pokemonId = Number(card.dataset.pokemonId);
-    const pokemon = pokemonDetailsData.find(
-        (pokemon) => pokemon.id === pokemonId
-    );
-
-    if (!pokemon) return;
-
-    openPokemonDialog(pokemon);
-});
-
 function showNextPokemon() {
     const currentId = Number(
         document.querySelector('[data-id="dialog-image"]').dataset.pokemonId
@@ -266,6 +218,36 @@ function showPreviousPokemon() {
     }
 }
 
+function setEventListener() {
+searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchPokemon();
+});
+
+loadMoreButton.addEventListener("click", () => {
+    if (isSearchActive) {
+        searchInput.value = "";
+        searchPokemon();
+        return;
+    }
+
+    loadPokemon();
+});
+
+pokemonCards.addEventListener("click", (event) => {
+    const card = event.target.closest('[data-id="card"]');
+
+    if (!card) return;
+    const pokemonId = Number(card.dataset.pokemonId);
+    const pokemon = pokemonDetailsData.find(
+        (pokemon) => pokemon.id === pokemonId
+    );
+
+    if (!pokemon) return;
+
+    openPokemonDialog(pokemon);
+});
+
 document.querySelector('[data-id="next-button"]')
     .addEventListener("click", showNextPokemon);
 
@@ -283,6 +265,7 @@ document.addEventListener("keydown", (event) => {
         showPreviousPokemon();
     }
 });
+
 document.querySelector('[data-id="close-dialog-button"]')
     .addEventListener("click", () => {
         dialog.close();
@@ -299,3 +282,6 @@ dialog.addEventListener("click", (event) => {
 dialog.addEventListener("close", () => {
     document.body.style.overflow = "";
 });
+}
+
+init();
