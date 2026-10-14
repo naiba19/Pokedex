@@ -218,70 +218,86 @@ function showPreviousPokemon() {
     }
 }
 
+
 function setEventListener() {
-searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    searchPokemon();
-});
+    setSearchEventListeners();
+    setLoadMoreEventListeners();
+    setPokemonCardEventListeners();
+    setNavigationEventListeners();
+    setDialogEventListeners();
+}
 
-loadMoreButton.addEventListener("click", () => {
-    if (isSearchActive) {
-        searchInput.value = "";
+function setSearchEventListeners() {
+    searchForm.addEventListener("submit", (event) => {
+        event.preventDefault();
         searchPokemon();
-        return;
-    }
+    });
+}
 
-    loadPokemon();
-});
+function setLoadMoreEventListeners() {
+    loadMoreButton.addEventListener("click", () => {
+        if (isSearchActive) {
+            searchInput.value = "";
+            searchPokemon();
+            return;
+        }
 
-pokemonCards.addEventListener("click", (event) => {
-    const card = event.target.closest('[data-id="card"]');
+        loadPokemon();
+    });
+}
 
-    if (!card) return;
-    const pokemonId = Number(card.dataset.pokemonId);
-    const pokemon = pokemonDetailsData.find(
-        (pokemon) => pokemon.id === pokemonId
-    );
+function setPokemonCardEventListeners() {
+    pokemonCards.addEventListener("click", (event) => {
+        const card = event.target.closest('[data-id="card"]');
 
-    if (!pokemon) return;
+        if (!card) return;
 
-    openPokemonDialog(pokemon);
-});
+        const pokemonId = Number(card.dataset.pokemonId);
+        const pokemon = pokemonDetailsData.find(
+            (item) => item.id === pokemonId
+        );
 
-document.querySelector('[data-id="next-button"]')
-    .addEventListener("click", showNextPokemon);
+        if (pokemon) openPokemonDialog(pokemon);
+    });
+}
 
-document.querySelector('[data-id="prev-button"]')
-    .addEventListener("click", showPreviousPokemon);
+function setNavigationEventListeners() {
+    document.querySelector('[data-id="next-button"]')
+        .addEventListener("click", showNextPokemon);
 
-document.addEventListener("keydown", (event) => {
+    document.querySelector('[data-id="prev-button"]')
+        .addEventListener("click", showPreviousPokemon);
+
+    document.addEventListener("keydown", handleDialogKeyboardNavigation);
+}
+
+function handleDialogKeyboardNavigation(event) {
     if (!dialog.open) return;
 
-    if (event.key === "ArrowRight") {
-        showNextPokemon();
-    }
+    if (event.key === "ArrowRight") showNextPokemon();
+    if (event.key === "ArrowLeft") showPreviousPokemon();
+}
 
-    if (event.key === "ArrowLeft") {
-        showPreviousPokemon();
-    }
-});
+function setDialogEventListeners() {
+    document.querySelector('[data-id="close-dialog-button"]')
+        .addEventListener("click", closePokemonDialog);
 
-document.querySelector('[data-id="close-dialog-button"]')
-    .addEventListener("click", () => {
-        dialog.close();
-        document.body.style.overflow = "";
-    });
+    dialog.addEventListener("click", handleDialogBackdropClick);
+    dialog.addEventListener("close", resetBodyScroll);
+}
 
-dialog.addEventListener("click", (event) => {
+function handleDialogBackdropClick(event) {
     if (event.target === dialog) {
         dialog.close();
-        document.body.style.overflow = "";
     }
-});
+}
 
-dialog.addEventListener("close", () => {
+function closePokemonDialog() {
+    dialog.close();
+}
+
+function resetBodyScroll() {
     document.body.style.overflow = "";
-});
 }
 
 init();
