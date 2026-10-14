@@ -39,6 +39,7 @@ async function fetchPokemonData() {
 
 async function loadPokemon() {
     if (isLoading) return;
+    
     isLoading = true;
     setLoadingState(true);
 
@@ -87,30 +88,55 @@ async function getPokemonDetails(pokemonArray) {
     );
 }
 
-async function searchPokemon() {
+
+function searchPokemon() {
     const searchTerm = searchInput.value.trim().toLowerCase();
 
     if (searchTerm.length < 3) {
-        isSearchActive = false;
-        displayedPokemonData = [...pokemonDetailsData];
-        pokemonList.innerHTML = pokemonDetailsData
-            .map(createPokemonCard)
-            .join("");
-        loadMoreButton.textContent = "Load More";
-        notFound.hidden = true;
+        resetPokemonSearch();
         return;
     }
 
     isSearchActive = true;
-    const pokemon = pokemonDetailsData.filter((pokemon) =>
+
+    const filteredPokemon = filterPokemonByName(searchTerm);
+
+    displaySearchResults(filteredPokemon);
+}
+
+function resetPokemonSearch() {
+    isSearchActive = false;
+    displayedPokemonData = [...pokemonDetailsData];
+
+    renderAllPokemonCards();
+
+    loadMoreButton.textContent = "Load More";
+    notFound.hidden = true;
+}
+
+function filterPokemonByName(searchTerm) {
+    return pokemonDetailsData.filter((pokemon) =>
         pokemon.name.includes(searchTerm)
     );
+}
 
+function displaySearchResults(pokemon) {
     displayedPokemonData = pokemon;
-    pokemonList.innerHTML = pokemon.map(createPokemonCard).join("");
+
+    pokemonList.innerHTML = pokemon
+        .map(createPokemonCard)
+        .join("");
+
     notFound.hidden = pokemon.length !== 0;
     loadMoreButton.textContent = "Back";
 }
+
+function renderAllPokemonCards() {
+    pokemonList.innerHTML = pokemonDetailsData
+        .map(createPokemonCard)
+        .join("");
+}
+
 
 function renderPokemonCards(pokemonDetails) {
     pokemonList.innerHTML += pokemonDetails
@@ -129,7 +155,6 @@ async function loadEvolutionChain(pokemon) {
 
     const speciesData = await speciesResponse.json();
     const evolutionUrl = speciesData.evolution_chain.url;
-
     const evolutionResponse = await fetch(evolutionUrl);
     const evolutionData = await evolutionResponse.json();
 
@@ -154,37 +179,59 @@ function updateNavigationButtons(currentIndex) {
         currentIndex >= displayedPokemonData.length - 1;
 }
 
+
 async function openPokemonDialog(pokemon) {
+    displayPokemonDetails(pokemon);
+    await displayPokemonEvolution(pokemon);
+    updatePokemonDialogNavigation(pokemon);
+    showPokemonDialog();
+}
+
+function displayPokemonDetails(pokemon) {
     const dialogName = document.querySelector(".dialog-name");
     const dialogImage = document.querySelector('[data-id="dialog-image"]');
-    const hp = document.querySelector(".stat-hp");
-    const attack = document.querySelector(".stat-attack");
-    const defense = document.querySelector(".stat-defense");
 
     dialogName.textContent = pokemon.name;
-    const loadEvolutionData = await loadEvolutionChain(pokemon);
-    const evolutionNames = getEvolutionNames(loadEvolutionData.chain);
-    document.querySelector('[data-id="evolution-chain"]').textContent =
-        `Evolution: ${evolutionNames.join(" → ")}`;
     dialogImage.src = pokemon.sprites.front_default;
     dialogImage.alt = pokemon.name;
     dialogImage.dataset.pokemonId = pokemon.id;
 
-    hp.textContent = pokemon.stats[0].base_stat;
-    attack.textContent = pokemon.stats[1].base_stat;
-    defense.textContent = pokemon.stats[2].base_stat;
+    displayPokemonStats(pokemon);
+}
 
+function displayPokemonStats(pokemon) {
+    document.querySelector(".stat-hp").textContent =
+        pokemon.stats[0].base_stat;
+
+    document.querySelector(".stat-attack").textContent =
+        pokemon.stats[1].base_stat;
+
+    document.querySelector(".stat-defense").textContent =
+        pokemon.stats[2].base_stat;
+}
+
+async function displayPokemonEvolution(pokemon) {
+    const evolutionData = await loadEvolutionChain(pokemon);
+    const evolutionNames = getEvolutionNames(evolutionData.chain);
+
+    document.querySelector('[data-id="evolution-chain"]').textContent =
+        `Evolution: ${evolutionNames.join(" → ")}`;
+}
+
+function updatePokemonDialogNavigation(pokemon) {
     const currentIndex = displayedPokemonData.findIndex(
         (item) => item.id === pokemon.id
     );
 
     updateNavigationButtons(currentIndex);
-
-  if (!dialog.open) {
-    dialog.showModal();
 }
 
-document.body.style.overflow = "hidden";
+function showPokemonDialog() {
+    if (!dialog.open) {
+        dialog.showModal();
+    }
+
+    document.body.style.overflow = "hidden";
 }
 
 function showNextPokemon() {
