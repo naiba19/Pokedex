@@ -215,7 +215,6 @@ button {
     background-color: #b8b8d0;
 }
 
-
 .pokemon-card img {
     width: 100%;
     max-width: 200px;
@@ -224,7 +223,6 @@ button {
     object-fit: contain;
     flex-shrink: 0;
 }
-
 
 .pokemon-name {
     font-size: 18px;
@@ -271,7 +269,6 @@ button {
     transform: none;
 }
 
-
 dialog {
     width: min(480px, calc(100% - 40px));
     max-height: 90vh;
@@ -282,7 +279,6 @@ dialog {
     background-color: #111827;
     overflow: hidden;
 }
-
 
 dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.65);
@@ -503,11 +499,20 @@ dialog::backdrop {
     .pokemon-card {
         min-height: 260px;
     }
+   
+@media (max-width: 480px) {
+    dialog {
+        height: 520px;
+        max-height: calc(100vh - 32px);
+    }
 
     .dialog-content {
-        min-height: 450px;
+        height: 100%;
+        min-height: 0;
+        padding: 32px 16px;
         gap: 8px;
     }
+}
 
     .dialog-name {
         font-size: 24px;
